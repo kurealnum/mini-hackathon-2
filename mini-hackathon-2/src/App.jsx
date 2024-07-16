@@ -54,15 +54,14 @@ function App() {
       const newKcals = newConsumed["energy_serving"] / 4.18;
       const newFat = newConsumed["fat_serving"];
       if (!isNaN(newKcals)) {
-        setConsumedCalories(consumedCalories + newKcals);
-        localStorage.setItem(
-          "consumedCalories",
-          JSON.stringify(consumedCalories),
-        );
+        const totalCalories = consumedCalories + newKcals;
+        setConsumedCalories(totalCalories);
+        localStorage.setItem("consumedCalories", JSON.stringify(totalCalories));
       }
       if (!isNaN(newFat)) {
-        setConsumedFat(consumedFat + newConsumed["fat_serving"]);
-        localStorage.setItem("consumedFat", JSON.stringify(consumedFat));
+        const totalFat = consumedFat + newFat;
+        setConsumedFat(totalFat);
+        localStorage.setItem("consumedFat", JSON.stringify(totalFat));
       }
     });
   }
