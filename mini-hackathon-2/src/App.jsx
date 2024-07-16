@@ -4,12 +4,18 @@ import "./App.css";
 function App() {
   const [code, setCode] = useState();
   const [consumed, setConsumed] = useState([]);
+  const [calories, setCalories] = useState();
+  const [consumedCalories, setConsumedCalories] = useState(0);
 
   function getData() {
     const fields = "energy_serving,product_name";
     const response = request(code, fields);
     response.then((result) => {
-      setConsumed([...consumed, result["products"][0]]);
+      const newConsumed = result["products"][0];
+      setConsumed([...consumed, newConsumed]);
+      setConsumedCalories(
+        consumedCalories + newConsumed["energy_serving"] / 4.18,
+      );
     });
   }
 
@@ -23,17 +29,28 @@ function App() {
           Submit
         </button>
       </form>
+      <div id="number-of-calories">
+        <label>Your recommended # of calories to consume per day</label>
+        <input onChange={(e) => setCalories(e.target.value)}></input>
+      </div>
       <div id="listed-items">
         {consumed.length == 0 ? (
           <p>You have not entered any items yet!</p>
         ) : (
+          // energy is returned from the api in kj, need to convert to calories
           consumed.map((item) => (
             <p key={item}>
-              {item["product_name"]}: {item["energy_serving"]} kcals
+              {item["product_name"]}: ~
+              {Math.floor(item["energy_serving"] / 4.18)} calories
             </p>
           ))
         )}
       </div>
+      <div id="nutrition-left">
+        You have {Math.floor(calories - consumedCalories)} calories left to
+        consume today!
+      </div>
+      <p>(Nutrition facts are based off of the suggested serving size)</p>
     </>
   );
 }
