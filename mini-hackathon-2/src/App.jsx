@@ -1,10 +1,12 @@
 import { useState } from "react";
+import Input from "./components/Input";
 
 function App() {
   const [code, setCode] = useState();
   const [consumed, setConsumed] = useState([]);
   const [calories, setCalories] = useState(0);
   const [consumedCalories, setConsumedCalories] = useState(0);
+  const [fat, setFat] = useState(0);
 
   function getData() {
     const fields = "energy_serving,product_name";
@@ -21,19 +23,22 @@ function App() {
   return (
     <>
       <h1>Consumption Tracker</h1>
+      <h2>
+        Enter the amount of each nutritional value that you would like to
+        consume each day
+      </h2>
       <div id="inputs">
-        <form onSubmit={(e) => e.preventDefault()}>
-          <label>Input a barcode</label>
-          <input onChange={(e) => setCode(e.target.value)}></input>
-          <button type="submit" onClick={getData}>
-            Submit
-          </button>
-        </form>
-        <div id="number-of-calories">
-          <label>Your recommended # of calories to consume per day</label>
-          <input onChange={(e) => setCalories(e.target.value)}></input>
-        </div>
+        <Input setVariable={setCalories} text={"Calories:"} />
+        <Input setVariable={setFat} text={"Fat:"} />
       </div>
+      <h2>Then enter a barcode for a food or drink</h2>
+      <form id="barcode" onSubmit={(e) => e.preventDefault()}>
+        <label>Input a barcode</label>
+        <input onChange={(e) => setCode(e.target.value)}></input>
+        <button type="submit" onClick={getData}>
+          Submit
+        </button>
+      </form>
       <div id="listed-items">
         <h2>All consumed items</h2>
         {consumed.length == 0 ? (
