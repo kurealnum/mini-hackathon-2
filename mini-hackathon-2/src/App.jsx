@@ -1,5 +1,3 @@
-// NOTE TO SELF: there is still a bug where entering one barcode wont save to localstorage, but entering 2 or more barcodes will save all of them except the first
-
 import { useState, useEffect } from "react";
 import Input from "./components/Input";
 
@@ -12,7 +10,7 @@ function App() {
   const [consumedFat, setConsumedFat] = useState(0);
 
   useEffect(() => {
-    // note to self: any way to simplify the next 20 lines a little bit?
+    // note to self: any way to simplify this function a little bit?
     const consumedLocal = JSON.parse(localStorage.getItem("consumed"));
     const caloriesLocal = localStorage.getItem("calorie");
     const consumedCaloriesLocal = JSON.parse(
@@ -48,8 +46,9 @@ function App() {
     const response = request(code, fields);
     response.then((result) => {
       const newConsumed = result["products"][0];
-      setConsumed([...consumed, newConsumed]);
-      localStorage.setItem("consumed", JSON.stringify(consumed));
+      const combined = [...consumed, newConsumed];
+      setConsumed(combined);
+      localStorage.setItem("consumed", JSON.stringify(combined));
 
       // check to make sure api actually returned a number
       const newKcals = newConsumed["energy_serving"] / 4.18;
