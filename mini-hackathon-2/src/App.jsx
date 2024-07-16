@@ -1,16 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Input from "./components/Input";
 
 function App() {
   const [code, setCode] = useState();
-
   const [consumed, setConsumed] = useState([]);
-
   const [calories, setCalories] = useState(0);
   const [consumedCalories, setConsumedCalories] = useState(0);
-
   const [fat, setFat] = useState(0);
   const [consumedFat, setConsumedFat] = useState(0);
+
+  useEffect(() => {
+    setConsumed(JSON.parse(localStorage.getItem("consumed")));
+    setCalories(JSON.parse(localStorage.getItem("calorie")));
+    setConsumedCalories(JSON.parse(localStorage.getItem("consumedCalories")));
+    setFat(JSON.parse(localStorage.getItem("fat")));
+    setConsumedFat(JSON.parse(localStorage.getItem("consumedFat")));
+
+    // set the calorie and fat inputs to where the user left them
+    document.getElementById("calorie").value = calories;
+    document.getElementById("fat").value = fat;
+  }, [fat, calories]);
 
   // used to make a request to the API and manage the response
   function getData() {
@@ -19,15 +28,21 @@ function App() {
     response.then((result) => {
       const newConsumed = result["products"][0];
       setConsumed([...consumed, newConsumed]);
+      localStorage.setItem("consumed", JSON.stringify(consumed));
 
       // check to make sure api actually returned a number
       const newKcals = newConsumed["energy_serving"] / 4.18;
       const newFat = newConsumed["fat_serving"];
       if (!isNaN(newKcals)) {
         setConsumedCalories(consumedCalories + newKcals);
+        localStorage.setItem(
+          "consumedCalories",
+          JSON.stringify(consumedCalories),
+        );
       }
       if (!isNaN(newFat)) {
         setConsumedFat(consumedFat + newConsumed["fat_serving"]);
+        localStorage.setItem("consumedFat", JSON.stringify(consumedFat));
       }
     });
   }
@@ -40,8 +55,8 @@ function App() {
         consume each day
       </h2>
       <div id="inputs">
-        <Input setVariable={setCalories} text={"Calories:"} />
-        <Input setVariable={setFat} text={"Fat (in grams):"} />
+        <Input setVariable={setCalories} text={"Calories:"} id={"calorie"} />
+        <Input setVariable={setFat} text={"Fat (in grams):"} id={"fat"} />
       </div>
       <h2>Then enter a barcode for a food or drink</h2>
       <form id="barcode" onSubmit={(e) => e.preventDefault()}>

@@ -1,10 +1,17 @@
 /* eslint-disable react/prop-types */
 
-function Input({ setVariable, text }) {
+// setVariable and saveVariable are both functions
+function Input({ setVariable, text, id }) {
   return (
     <div className="input">
       <label>{text}</label>
-      <input onChange={(e) => setVariable(e.target.value)}></input>
+      <input
+        id={id}
+        onChange={(e) => {
+          setVariable(e.target.value);
+          localStorage.setItem(id, e.target.value);
+        }}
+      ></input>
     </div>
   );
 }
