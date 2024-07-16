@@ -6,10 +6,10 @@ function App() {
   const [consumed, setConsumed] = useState([]);
 
   function getData() {
-    const fields = "energy_serving";
+    const fields = "energy_serving,product_name";
     const response = request(code, fields);
-    response.then((it) => {
-      setConsumed([...consumed, code]);
+    response.then((result) => {
+      setConsumed([...consumed, result["products"][0]]);
     });
   }
 
@@ -27,7 +27,11 @@ function App() {
         {consumed.length == 0 ? (
           <p>You have not entered any items yet!</p>
         ) : (
-          consumed.map((item) => <p key={item}>{item}</p>)
+          consumed.map((item) => (
+            <p key={item}>
+              {item["product_name"]}: {item["energy_serving"]} kcals
+            </p>
+          ))
         )}
       </div>
     </>
