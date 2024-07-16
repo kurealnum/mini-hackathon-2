@@ -3,20 +3,32 @@ import Input from "./components/Input";
 
 function App() {
   const [code, setCode] = useState();
+
   const [consumed, setConsumed] = useState([]);
+
   const [calories, setCalories] = useState(0);
   const [consumedCalories, setConsumedCalories] = useState(0);
-  const [fat, setFat] = useState(0);
 
+  const [fat, setFat] = useState(0);
+  const [consumedFat, setConsumedFat] = useState(0);
+
+  // used to make a request to the API and manage the response
   function getData() {
-    const fields = "energy_serving,product_name";
+    const fields = "energy_serving,product_name,fat_serving";
     const response = request(code, fields);
     response.then((result) => {
       const newConsumed = result["products"][0];
       setConsumed([...consumed, newConsumed]);
-      setConsumedCalories(
-        consumedCalories + newConsumed["energy_serving"] / 4.18,
-      );
+
+      // check to make sure api actually returned a number
+      const newKcals = newConsumed["energy_serving"] / 4.18;
+      const newFat = newConsumed["fat_serving"];
+      if (!isNaN(newKcals)) {
+        setConsumedCalories(consumedCalories + newKcals);
+      }
+      if (!isNaN(newFat)) {
+        setConsumedFat(consumedFat + newConsumed["fat_serving"]);
+      }
     });
   }
 
@@ -29,7 +41,7 @@ function App() {
       </h2>
       <div id="inputs">
         <Input setVariable={setCalories} text={"Calories:"} />
-        <Input setVariable={setFat} text={"Fat:"} />
+        <Input setVariable={setFat} text={"Fat (in grams):"} />
       </div>
       <h2>Then enter a barcode for a food or drink</h2>
       <form id="barcode" onSubmit={(e) => e.preventDefault()}>
@@ -45,26 +57,40 @@ function App() {
           <p>You have not entered any items yet!</p>
         ) : (
           // energy is returned from the api in kj, need to convert to calories
-          consumed.map((item) => (
-            <p key={item}>
+          consumed.map((item, index) => (
+            <p key={index}>
               {item["product_name"]}: ~
-              {Math.floor(item["energy_serving"] / 4.18)} calories
+              {Math.floor(item["energy_serving"] / 4.18)} calories -{" "}
+              {Math.floor(item["fat_serving"])} grams of fat
             </p>
           ))
         )}
       </div>
-      <div id="nutrition-left">
+      {}
+      <div id="nutrition-list">
         You have{" "}
-        {consumedCalories == 0 || calories == 0
+        {calories <= 0
           ? "???"
-          : Math.floor(calories - consumedCalories) < 0
-            ? "no"
-            : Math.floor(calories - consumedCalories)}{" "}
-        calories left to consume today!
+          : consumedCalories == 0
+            ? calories
+            : Math.floor(calories - consumedCalories) < 0
+              ? "no"
+              : Math.floor(calories - consumedCalories)}{" "}
+        calories left to consume today, and you have{" "}
+        {fat <= 0
+          ? "???"
+          : consumedFat == 0
+            ? fat
+            : Math.floor(fat - consumedFat) < 0
+              ? "no"
+              : Math.floor(fat - consumedFat)}{" "}
+        grams of fat left to consume.
       </div>
-      <p2>(Nutrition facts are based off of the suggested serving size)</p2>
+      <p id="small-text">
+        (Nutrition facts are based off of the suggested serving size)
+      </p>
     </>
-  );
+  ); // nutrition-list is a nasty little bit of code, but it's just the logic to display how much more the user can intake based on their paramaters
 }
 
 async function request(code, fields) {
