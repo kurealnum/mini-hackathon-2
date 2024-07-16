@@ -1,3 +1,5 @@
+// NOTE TO SELF: there is still a bug where entering one barcode wont save to localstorage, but entering 2 or more barcodes will save all of them except the first
+
 import { useState, useEffect } from "react";
 import Input from "./components/Input";
 
@@ -10,11 +12,30 @@ function App() {
   const [consumedFat, setConsumedFat] = useState(0);
 
   useEffect(() => {
-    setConsumed(JSON.parse(localStorage.getItem("consumed")));
-    setCalories(JSON.parse(localStorage.getItem("calorie")));
-    setConsumedCalories(JSON.parse(localStorage.getItem("consumedCalories")));
-    setFat(JSON.parse(localStorage.getItem("fat")));
-    setConsumedFat(JSON.parse(localStorage.getItem("consumedFat")));
+    // note to self: any way to simplify the next 20 lines a little bit?
+    const consumedLocal = JSON.parse(localStorage.getItem("consumed"));
+    const caloriesLocal = localStorage.getItem("calorie");
+    const consumedCaloriesLocal = JSON.parse(
+      localStorage.getItem("consumedCalories"),
+    );
+    const fatLocal = localStorage.getItem("fat");
+    const consumedFatLocal = JSON.parse(localStorage.getItem("consumedFat"));
+
+    if (consumedLocal) {
+      setConsumed(consumedLocal);
+    }
+    if (caloriesLocal) {
+      setCalories(caloriesLocal);
+    }
+    if (consumedCaloriesLocal) {
+      setConsumedCalories(consumedCaloriesLocal);
+    }
+    if (fatLocal) {
+      setFat(fatLocal);
+    }
+    if (consumedFatLocal) {
+      setConsumedFat(consumedFatLocal);
+    }
 
     // set the calorie and fat inputs to where the user left them
     document.getElementById("calorie").value = calories;
@@ -45,6 +66,17 @@ function App() {
         localStorage.setItem("consumedFat", JSON.stringify(consumedFat));
       }
     });
+  }
+
+  // doesn't actually clear everything, only clears consumed/fat/calories. also updates the UI
+  function clearLocalStorage() {
+    localStorage.setItem("consumed", JSON.stringify([]));
+    localStorage.setItem("consumedCalories", JSON.stringify(0));
+    localStorage.setItem("consumedFat", JSON.stringify(0));
+
+    setConsumed([]);
+    setConsumedCalories(0);
+    setConsumedFat(0);
   }
 
   return (
@@ -104,8 +136,9 @@ function App() {
       <p id="small-text">
         (Nutrition facts are based off of the suggested serving size)
       </p>
+      <button onClick={clearLocalStorage}>Clear history</button>
     </>
-  ); // nutrition-list is a nasty little bit of code, but it's just the logic to display how much more the user can intake based on their paramaters
+  ); // everything inside nutrition-list is a nasty little bit of code, but it's just the logic to display how much more the user can intake based on their paramaters
 }
 
 async function request(code, fields) {

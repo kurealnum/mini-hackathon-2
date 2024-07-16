@@ -20,6 +20,11 @@
   text-align: center;
 }
 
+input {
+  border-radius: 15px;
+  padding: 4px;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -33,6 +38,7 @@ a:hover {
   display: flex;
   gap: 10px;
   align-items: baseline;
+  justify-content: center;
 }
 
 body {
@@ -47,14 +53,18 @@ h1 {
   line-height: 1.1;
 }
 
-p2 {
+#small-text {
   font-size: 12px;
   font-style: italic; 
 }
 
+h2 {
+  margin-top: 75px;
+}
+
 #listed-items {
   margin-top: 50px;
-  margin-bottom: 50px;
+  margin-bottom: 80px;
 }
 
 label {
