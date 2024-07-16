@@ -1,10 +1,9 @@
 import { useState } from "react";
-import "./App.css";
 
 function App() {
   const [code, setCode] = useState();
   const [consumed, setConsumed] = useState([]);
-  const [calories, setCalories] = useState();
+  const [calories, setCalories] = useState(0);
   const [consumedCalories, setConsumedCalories] = useState(0);
 
   function getData() {
@@ -22,18 +21,21 @@ function App() {
   return (
     <>
       <h1>Consumption Tracker</h1>
-      <form onSubmit={(e) => e.preventDefault()}>
-        <label>Input a barcode</label>
-        <input onChange={(e) => setCode(e.target.value)}></input>
-        <button type="submit" onClick={getData}>
-          Submit
-        </button>
-      </form>
-      <div id="number-of-calories">
-        <label>Your recommended # of calories to consume per day</label>
-        <input onChange={(e) => setCalories(e.target.value)}></input>
+      <div id="inputs">
+        <form onSubmit={(e) => e.preventDefault()}>
+          <label>Input a barcode</label>
+          <input onChange={(e) => setCode(e.target.value)}></input>
+          <button type="submit" onClick={getData}>
+            Submit
+          </button>
+        </form>
+        <div id="number-of-calories">
+          <label>Your recommended # of calories to consume per day</label>
+          <input onChange={(e) => setCalories(e.target.value)}></input>
+        </div>
       </div>
       <div id="listed-items">
+        <h2>All consumed items</h2>
         {consumed.length == 0 ? (
           <p>You have not entered any items yet!</p>
         ) : (
@@ -47,10 +49,15 @@ function App() {
         )}
       </div>
       <div id="nutrition-left">
-        You have {Math.floor(calories - consumedCalories)} calories left to
-        consume today!
+        You have{" "}
+        {consumedCalories == 0 || calories == 0
+          ? "???"
+          : Math.floor(calories - consumedCalories) < 0
+            ? "no"
+            : Math.floor(calories - consumedCalories)}{" "}
+        calories left to consume today!
       </div>
-      <p>(Nutrition facts are based off of the suggested serving size)</p>
+      <p2>(Nutrition facts are based off of the suggested serving size)</p2>
     </>
   );
 }
