@@ -21,6 +21,8 @@
 }
 
 input {
+  border-style: solid;
+  border-color: #967bb6;
   border-radius: 15px;
   padding: 4px;
 }
@@ -63,8 +65,21 @@ h2 {
 }
 
 #listed-items {
+   margin: 0 auto;
   margin-top: 50px;
   margin-bottom: 80px;
+  background: #2b2a33;
+  width: 25%;
+  padding: 40px 30px;
+  border-radius: 10px;
+}
+
+#listed-items h2 {
+  margin-top: 0px;
+}
+
+#listed-items p:last-child {
+  margin-bottom: 0px;
 }
 
 label {
@@ -79,7 +94,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #967bb6;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -96,3 +111,10 @@ button {
     background-color: #f9f9f9;
   }
 }
+
+@media (max-width:800px) {
+  #listed-items {
+    width: 275px;
+  }
+}
+
